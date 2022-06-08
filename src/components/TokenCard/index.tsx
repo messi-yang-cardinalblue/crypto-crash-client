@@ -4,10 +4,10 @@ type Props = {
   tokenPrice: number;
 };
 
-export default function TokenCard(props: Props) {
+export default function TokenCard({ tokenId, tokenName, tokenPrice }: Props) {
   return (
     <div className="p-5 border-2 rounded-xl">
-      {props.tokenId},{props.tokenName},{props.tokenPrice}
+      {tokenId},{tokenName},{tokenPrice}
     </div>
   );
 }
