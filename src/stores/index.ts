@@ -2,10 +2,10 @@ import { createWrapper } from 'next-redux-wrapper';
 import { Action } from 'redux';
 import { configureStore, ThunkAction } from '@reduxjs/toolkit';
 
-import profileReducer from './profile';
+import gameReducer from './game';
 
 export const reducer = {
-  profile: profileReducer,
+  game: gameReducer,
 };
 
 export const makeStore = () =>
