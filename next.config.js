@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { i18n } = require('./next-i18next.config');
 
 /** @type {import('next').NextConfig} */
@@ -12,6 +13,9 @@ const nextConfig = {
   pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js'],
   eslint: {
     dirs: ['src'],
+  },
+  env: {
+    SERVER_URL: process.env.SERVER_URL,
   },
   dir: './src',
 };

@@ -1,8 +1,18 @@
-import React from 'react';
+import { useCallback, useContext } from 'react';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
-import ActionPanel from './ActionPanel';
+import GameContext from '@/contexts/GameContext';
 
 function Table() {
+  const { tokens, exchangeToken } = useContext(GameContext);
+
+  const handleBuyClick = useCallback((tokenId: string, amount: number) => {
+    exchangeToken(tokenId, amount);
+  }, []);
+
+  const handleSellClick = useCallback((tokenId: string, amount: number) => {
+    exchangeToken(tokenId, -amount);
+  }, []);
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -12,7 +22,7 @@ function Table() {
               Product name
             </th>
             <th scope="col" className="px-6 py-3">
-              #
+              Price
             </th>
             <th scope="col" className="px-6 py-3">
               chart
@@ -26,78 +36,54 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <th
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+          {tokens.map((token) => (
+            <tr
+              key={token.id}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
-              Badcoin
-            </th>
-            <td className="px-6 py-4">0</td>
-            <td className="px-6 py-4">
-              <Sparklines data={[5, 10, 5, 0]}>
-                <SparklinesLine
-                  color="red"
-                  style={{
-                    strokeWidth: 3,
-                    // fillOpacity: "0"
-                  }}
-                />
-              </Sparklines>
-            </td>
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
+              >
+                {token.name}
+              </th>
+              <td className="px-6 py-4">{token.price}</td>
+              <td className="px-6 py-4">
+                <Sparklines data={[5, 10, 5, 0]}>
+                  <SparklinesLine
+                    color="red"
+                    style={{
+                      strokeWidth: 3,
+                    }}
+                  />
+                </Sparklines>
+              </td>
 
-            <td className="px-6 py-4 text-red-500">-0.4%</td>
-            <td className="px-6 py-4 text-right">
-              <ActionPanel />
-            </td>
-          </tr>
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <th
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
-            >
-              Catcoin
-            </th>
-            <td className="px-6 py-4">4</td>
-            <td className="px-6 py-4">
-              <Sparklines data={[5, 10, 5, 20]}>
-                <SparklinesLine
-                  color="green"
-                  style={{
-                    strokeWidth: 3,
-                    // fillOpacity: "0"
-                  }}
-                />
-              </Sparklines>
-            </td>
-            <td className="px-6 py-4 text-green-500">1.35%</td>
-            <td className="px-6 py-4 text-right">
-              <ActionPanel />
-            </td>
-          </tr>
-          <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <th
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
-            >
-              Lulu
-            </th>
-            <td className="px-6 py-4">10</td>
-            <td className="px-6 py-4">
-              <Sparklines data={[5, 10, 5, 20]}>
-                <SparklinesLine
-                  color="green"
-                  style={{
-                    strokeWidth: 3,
-                  }}
-                />
-              </Sparklines>
-            </td>
-            <td className="px-6 py-4 text-green-500">0.3%</td>
-            <td className="px-6 py-4 text-right">
-              <ActionPanel />
-            </td>
-          </tr>
+              <td className="px-6 py-4 text-red-500">-0.4%</td>
+              <td className="px-6 py-4 text-right">
+                <div className="inline-flex rounded-md shadow-sm" role="group">
+                  <button
+                    type="button"
+                    className="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-l-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+                    onClick={() => {
+                      handleBuyClick(token.id, 1);
+                    }}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    type="button"
+                    className="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-r-md border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+                    onClick={() => {
+                      handleSellClick(token.id, 1);
+                    }}
+                  >
+                    Sell
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
