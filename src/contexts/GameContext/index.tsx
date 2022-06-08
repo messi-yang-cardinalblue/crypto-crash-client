@@ -8,6 +8,12 @@ import {
 } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+type Player = {
+  id: string;
+  name: string;
+  cash: number;
+};
+
 enum Events {
   LoggedIn = 'LOGGED_IN',
   GameUpdated = 'GAME_UPDATED',
@@ -15,13 +21,19 @@ enum Events {
   PlayerLeft = 'PLAYER_LEFT',
 }
 
+enum Actions {
+  ExchangeToken = 'EXCHANGE_TOKEN',
+}
+
 type GameOfLibertyContextValue = {
   login: () => void;
+  exchangeToken: (tokenId: string, amount: number) => void;
 };
 
 function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
   return {
     login: () => {},
+    exchangeToken: () => {},
   };
 }
 
@@ -40,9 +52,9 @@ export function Provider({ children }: Props) {
 
   const login = useCallback(() => {
     const newSocket = io(`localhost:8000/game`, {
-      // auth: {
-      //   authorization: sessionStorage.getItem('auth_token'),
-      // },
+      auth: {
+        authorization: sessionStorage.getItem('auth_token'),
+      },
     });
     socketRef.current = newSocket;
 
@@ -55,10 +67,17 @@ export function Provider({ children }: Props) {
     // };
   }, []);
 
+  const exchangeToken = useCallback((tokenId: string, amount: number) => {
+    if (socketRef.current) {
+      socketRef.current.emit(Actions.ExchangeToken, tokenId, amount);
+    }
+  }, []);
+
   useEffect(() => {
     if (socketRef.current) {
-      socketRef.current.on(Events.LoggedIn, () => {
-        // console.log(msg);
+      socketRef.current.on(Events.LoggedIn, (player: Player, token: string) => {
+        sessionStorage.setItem('auth_token', token);
+        // console.log(player, token);
       });
       socketRef.current.on(Events.GameUpdated, () => {
         // console.log(msg);
@@ -75,6 +94,7 @@ export function Provider({ children }: Props) {
   const gameOfLibertyContextValue = useMemo<GameOfLibertyContextValue>(
     () => ({
       login,
+      exchangeToken,
     }),
     []
   );
