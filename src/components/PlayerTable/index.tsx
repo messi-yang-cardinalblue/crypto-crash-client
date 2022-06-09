@@ -2,12 +2,20 @@ import { useContext } from 'react';
 import accounting from 'accounting';
 import GameContext from '@/contexts/GameContext';
 
-function Table() {
+type Props = {
+  onPlayerClick: (playerId: string) => any;
+};
+
+function Table({ onPlayerClick }: Props) {
   const {
     players,
     calculatePlayerPortfolioValue,
     calculatePlayerAvatarNumber,
   } = useContext(GameContext);
+
+  const handlePlayerClick = (playerId: string) => {
+    onPlayerClick(playerId);
+  };
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -44,6 +52,9 @@ function Table() {
               <tr
                 key={player.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                onClick={() => {
+                  handlePlayerClick(player.id);
+                }}
               >
                 <th scope="row" className="px-6 py-4">
                   {playerIdx + 1}
@@ -63,32 +74,27 @@ function Table() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  {
-                    (accounting.formatMoney(
-                      Math.round(player.cash * 1000) / 1000
-                    ),
+                  {accounting.formatMoney(
+                    Math.round(player.cash * 1000) / 1000,
                     '$',
-                    3)
-                  }
+                    3
+                  )}
                 </td>
                 <td className="px-6 py-4">
-                  {
-                    (accounting.formatMoney(
-                      calculatePlayerPortfolioValue(player.id)
-                    ),
+                  {accounting.formatMoney(
+                    calculatePlayerPortfolioValue(player.id),
                     '$',
-                    3)
-                  }
+                    3
+                  )}
                 </td>
                 <td className="px-6 py-4">
-                  {
-                    (accounting.formatMoney(
-                      Math.round(player.cash * 1000) / 1000 +
-                        calculatePlayerPortfolioValue(player.id)
-                    ),
+                  {accounting.formatMoney(
+                    Math.round(player.cash * 1000) / 1000 +
+                      calculatePlayerPortfolioValue(player.id),
+
                     '$',
-                    3)
-                  }
+                    3
+                  )}
                 </td>
               </tr>
             ))}

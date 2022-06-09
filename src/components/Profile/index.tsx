@@ -1,14 +1,18 @@
 import { useContext } from 'react';
 import accounting from 'accounting';
-import GameContext from '@/contexts/GameContext';
+import GameContext, { Player } from '@/contexts/GameContext';
 
-function Portfolio() {
+type Props = {
+  player: Player;
+};
+
+function Portfolio({ player }: Props) {
   const {
-    player,
     calculatePlayerPortfolioValue,
     calculateRank,
     calculatePlayerAvatarNumber,
   } = useContext(GameContext);
+
   return (
     <div className="flex items-center p-6 bg-white min-w-min rounded-lg border border-gray-300 shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <div className="w-24 h-24 mr-4">
@@ -34,15 +38,13 @@ function Portfolio() {
         </div>
         <div className="flex items-center">
           <h5 className="mb-0 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {
-              (player
-                ? accounting.formatMoney(
-                    player.cash + calculatePlayerPortfolioValue(player.id)
-                  )
-                : 0,
-              '$',
-              3)
-            }
+            {player
+              ? accounting.formatMoney(
+                  player.cash + calculatePlayerPortfolioValue(player.id),
+                  '$',
+                  3
+                )
+              : 0}
           </h5>
           <div className="mx-2" />
           {player && (

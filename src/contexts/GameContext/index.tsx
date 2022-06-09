@@ -60,6 +60,7 @@ type GameOfLibertyContextValue = {
   player: Player | null;
   tokens: Token[];
   players: Player[];
+  playerMap: { [playerId: string]: Player };
   transactions: Transaction[];
   login: (name: string) => void;
   exchangeToken: (tokenId: string, amount: number) => void;
@@ -73,6 +74,7 @@ function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
     player: null,
     tokens: [],
     players: [],
+    playerMap: {},
     transactions: [],
     login: () => {},
     exchangeToken: () => {},
@@ -130,11 +132,17 @@ export function Provider({ children }: Props) {
           icon: '📢',
           position: 'top-left',
           duration: 1000000,
+          style: {
+            width: '280px',
+          },
         });
         toast('任何人有三百萬美金都能參加。', {
           icon: '📢',
           position: 'top-left',
           duration: 1000000,
+          style: {
+            width: '280px',
+          },
         });
       }
     },
@@ -225,6 +233,9 @@ export function Provider({ children }: Props) {
     toast.success(`${p.name} joined the game`, {
       position: 'bottom-left',
       duration: 3000,
+      style: {
+        width: '280px',
+      },
     });
   };
 
@@ -232,6 +243,9 @@ export function Provider({ children }: Props) {
     toast.success(`${p.name} left the game`, {
       position: 'bottom-left',
       duration: 3000,
+      style: {
+        width: '280px',
+      },
     });
   };
 
@@ -241,6 +255,9 @@ export function Provider({ children }: Props) {
         icon: '📢',
         position: 'top-left',
         duration: 1000000,
+        style: {
+          width: '280px',
+        },
       });
     } else if (type === 1) {
       elonMuskTalk(msg);
@@ -303,6 +320,7 @@ export function Provider({ children }: Props) {
       player,
       tokens,
       players,
+      playerMap,
       transactions,
       login,
       exchangeToken,
