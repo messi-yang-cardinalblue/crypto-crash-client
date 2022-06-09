@@ -53,7 +53,7 @@ type GameOfLibertyContextValue = {
   tokens: Token[];
   players: Player[];
   transactions: Transaction[];
-  login: () => void;
+  login: (name: string) => void;
   exchangeToken: (tokenId: string, amount: number) => void;
   calculatePlayerTokensProperty: (playerId: string) => number;
 };
@@ -100,20 +100,23 @@ export function Provider({ children }: Props) {
     tokenMap[t.id] = t;
   });
 
-  const login = useCallback(() => {
-    if (serverUrl) {
-      const newSocket = io(`${serverUrl}/game`, {
-        auth: {
-          authorization: sessionStorage.getItem('auth_token'),
-        },
-        query: {
-          name: 'Hello World',
-        },
-      });
-      socketRef.current = newSocket;
-      setConnected(true);
-    }
-  }, [serverUrl]);
+  const login = useCallback(
+    (name: string) => {
+      if (serverUrl) {
+        const newSocket = io(`${serverUrl}/game`, {
+          auth: {
+            authorization: sessionStorage.getItem('auth_token'),
+          },
+          query: {
+            name,
+          },
+        });
+        socketRef.current = newSocket;
+        setConnected(true);
+      }
+    },
+    [serverUrl]
+  );
 
   const exchangeToken = useCallback((tokenId: string, amount: number) => {
     if (socketRef.current) {
@@ -147,7 +150,6 @@ export function Provider({ children }: Props) {
   const handleTokenExchanged = (transaction: Transaction) => {
     const p = playerMap[transaction.playerId];
     const t = tokenMap[transaction.tokenId];
-    console.log(transaction.playerId, playerMap);
     let msg = '';
     if (transaction.amount > 0) {
       msg = `${p.name} bought "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
