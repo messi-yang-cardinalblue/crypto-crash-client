@@ -1,6 +1,10 @@
 import { useCallback, useContext, useState } from 'react';
 import accounting from 'accounting';
-import { Sparklines, SparklinesLine } from 'react-sparklines';
+import {
+  Sparklines,
+  SparklinesLine,
+  SparklinesReferenceLine,
+} from 'react-sparklines';
 import GameContext, { Player, Token } from '@/contexts/GameContext';
 import QuantityInput from './QuantityInput';
 
@@ -15,6 +19,21 @@ const initialAmount = 1;
 function Table({ player }: Props) {
   const { tokens, exchangeToken } = useContext(GameContext);
   const [tokenAmountMap, setTokenAmountMap] = useState<TokenAmountMap>({});
+
+  const getTokenPriceMarginPercentIn10Cycles = useCallback(
+    (token: Token) => {
+      const { historyPrices } = token;
+      if (historyPrices.length < 2) {
+        return 100;
+      }
+      const margin =
+        historyPrices[
+          historyPrices.length > 10 ? historyPrices.length - 10 : 0
+        ] - historyPrices[historyPrices.length - 2];
+      return Math.round(margin * 100) / 100;
+    },
+    [tokenAmountMap]
+  );
 
   const handleQuantityInput = useCallback(
     (tokenId: string, amount: number) => {
@@ -64,7 +83,7 @@ function Table({ player }: Props) {
               chart
             </th>
             <th scope="col" className="px-6 py-3">
-              24hr Change
+              Changes in 10 Seconds
             </th>
             <th scope="col" className="px-6 py-3">
               Owned Quantity
@@ -95,20 +114,30 @@ function Table({ player }: Props) {
               <td className="px-6 py-4">
                 {accounting.formatMoney(token.price)}
               </td>
-              <td className="px-6 py-4">
+              <td className="px-1 py-1">
                 <Sparklines data={token.historyPrices}>
                   <SparklinesLine
-                    color="red"
                     style={{
                       strokeWidth: 3,
                     }}
                   />
+                  <SparklinesReferenceLine
+                    type="avg"
+                    style={{ stroke: 'yellow', strokeWidth: 1, fill: 'none' }}
+                  />
                 </Sparklines>
               </td>
 
-              <td className="px-6 py-4 text-red-500">
-                {token.historyPrices[token.historyPrices.length - 1] || 0}
-              </td>
+              {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
+                <td className="px-6 py-4 text-red-500">
+                  {`▲${getTokenPriceMarginPercentIn10Cycles(token)}%`}
+                </td>
+              ) : (
+                <td className="px-6 py-4 text-green-500">
+                  {`▼${-getTokenPriceMarginPercentIn10Cycles(token)}%`}
+                </td>
+              )}
+
               <td className="px-6 py-4">
                 {player?.tokenOwnerships[token.id].amount}
               </td>

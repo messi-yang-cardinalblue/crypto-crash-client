@@ -156,25 +156,25 @@ export function Provider({ children }: Props) {
     });
   };
 
-  const handleTokenExchanged = (transaction: Transaction) => {
-    const p = playerMap[transaction.playerId];
-    const t = tokenMap[transaction.tokenId];
-    if (!p || !t) {
-      return;
-    }
-    let msg = '';
-    if (transaction.amount > 0) {
-      msg = `${p.name} bought "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
-    } else {
-      msg = `${p.name} sold "${-transaction.amount} ${t.name}" at "$${
-        transaction.price
-      }"`;
-    }
-    toast.success(msg, {
-      position: 'bottom-left',
-      duration: 3000,
-    });
-  };
+  // const handleTokenExchanged = (transaction: Transaction) => {
+  //   const p = playerMap[transaction.playerId];
+  //   const t = tokenMap[transaction.tokenId];
+  //   if (!p || !t) {
+  //     return;
+  //   }
+  //   let msg = '';
+  //   if (transaction.amount > 0) {
+  //     msg = `${p.name} bought "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
+  //   } else {
+  //     msg = `${p.name} sold "${-transaction.amount} ${t.name}" at "$${
+  //       transaction.price
+  //     }"`;
+  //   }
+  //   toast.success(msg, {
+  //     position: 'bottom-left',
+  //     duration: 3000,
+  //   });
+  // };
 
   const handleGameUpdated = (payload: {
     tokens: Token[];
@@ -192,7 +192,7 @@ export function Provider({ children }: Props) {
       socketRef.current.on(Events.PlayerUpdated, handlePlayerUpdated);
       socketRef.current.on(Events.PlayerJoined, handlePlayerJoined);
       socketRef.current.on(Events.PlayerLeft, handlePlayerLeft);
-      socketRef.current.on(Events.TokenExchanged, handleTokenExchanged);
+      // socketRef.current.on(Events.TokenExchanged, handleTokenExchanged);
     }
 
     return () => {
@@ -201,7 +201,7 @@ export function Provider({ children }: Props) {
         socketRef.current.off(Events.PlayerUpdated, handlePlayerUpdated);
         socketRef.current.off(Events.PlayerJoined, handlePlayerJoined);
         socketRef.current.off(Events.PlayerLeft, handlePlayerLeft);
-        socketRef.current.off(Events.TokenExchanged, handleTokenExchanged);
+        // socketRef.current.off(Events.TokenExchanged, handleTokenExchanged);
       }
     };
   });
