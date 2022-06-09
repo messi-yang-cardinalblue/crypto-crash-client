@@ -9,7 +9,7 @@ function QuantityInput({ onMoneyChange }: Props) {
   const handleInput = (e: ChangeEvent) => {
     // @ts-ignore
     const newValue = e.target?.value || '';
-    const fixedMoney = Math.round(newValue * 100) / 100;
+    const fixedMoney = Math.round(newValue * 1000) / 1000;
     /* eslint-disable no-param-reassign */
     // @ts-ignore
     e.target.value = fixedMoney;

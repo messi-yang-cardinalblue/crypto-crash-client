@@ -20,6 +20,7 @@ export type Player = {
       amount: number;
     };
   };
+  transactions: Transaction[];
 };
 
 export type Token = {
@@ -196,7 +197,7 @@ export function Provider({ children }: Props) {
       const token = tokenMap[tokenId];
       property += ownership.amount * token.price;
     });
-    return Math.round(property * 100) / 100;
+    return Math.round(property * 1000) / 1000;
   };
 
   const calculateRank = (playerId: string): number => {

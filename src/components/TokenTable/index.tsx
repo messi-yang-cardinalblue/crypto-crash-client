@@ -51,7 +51,9 @@ function Table() {
     (token: Token): string => {
       const amount = tokenAmountMap[token.id] || initialAmount;
       return accounting.formatMoney(
-        Math.round(amount * token.price * 100) / 100
+        Math.round(amount * token.price * 1000) / 1000,
+        '$',
+        3
       );
     },
     [tokenAmountMap]
@@ -109,7 +111,7 @@ function Table() {
                 {token.name}
               </th>
               <td className="px-6 py-4">
-                {accounting.formatMoney(token.price)}
+                {accounting.formatMoney(token.price, '$', 3)}
               </td>
               <td className="px-1 py-1">
                 <Sparklines data={token.historyPrices}>
