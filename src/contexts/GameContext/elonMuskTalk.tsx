@@ -14,7 +14,9 @@ export default (msg: string) =>
               />
             </div>
             <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-gray-900">Elon Musk</p>
+              <p className="text-sm font-medium text-gray-900">
+                Elon Mask&apos;s Twitter
+              </p>
               <p className="mt-1 text-sm text-gray-500">{msg}</p>
             </div>
           </div>

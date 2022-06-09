@@ -52,6 +52,7 @@ enum Actions {
   StopGame = 'STOP_GAME',
   StartGame = 'START_GAME',
   AnnounceMessage = 'ANNOUNCE_MESSAGE',
+  ResetGame = 'RESET_GAME',
 }
 
 type GameOfLibertyContextValue = {
@@ -123,6 +124,17 @@ export function Provider({ children }: Props) {
         });
         socketRef.current = newSocket;
         setConnected(true);
+
+        toast('Everyone has 3 million dollars can join the game.', {
+          icon: '📢',
+          position: 'top-left',
+          duration: 1000000,
+        });
+        toast('任何人有三百萬美金都能參加。', {
+          icon: '📢',
+          position: 'top-left',
+          duration: 1000000,
+        });
       }
     },
     [serverUrl]
@@ -137,29 +149,29 @@ export function Provider({ children }: Props) {
   useEffect(() => {
     if (socketRef.current) {
       // @ts-ignore
-      window.ccStop = () => {
-        // @ts-ignore
-        socketRef.current.emit(Actions.StopGame);
-      };
-    }
-  }, [socketRef.current]);
-
-  useEffect(() => {
-    if (socketRef.current) {
-      // @ts-ignore
       window.ccStart = () => {
         // @ts-ignore
         socketRef.current.emit(Actions.StartGame);
       };
-    }
-  }, [socketRef.current]);
-
-  useEffect(() => {
-    if (socketRef.current) {
+      // @ts-ignore
+      window.ccStop = () => {
+        // @ts-ignore
+        socketRef.current.emit(Actions.StopGame);
+      };
+      // @ts-ignore
+      window.ccReset = () => {
+        // @ts-ignore
+        socketRef.current.emit(Actions.ResetGame);
+      };
+      // @ts-ignore
+      window.ccElonMuskSpeak = (msg: string) => {
+        // @ts-ignore
+        socketRef.current.emit(Actions.AnnounceMessage, 1, msg);
+      };
       // @ts-ignore
       window.ccSpeak = (msg: string) => {
         // @ts-ignore
-        socketRef.current.emit(Actions.AnnounceMessage, msg);
+        socketRef.current.emit(Actions.AnnounceMessage, 0, msg);
       };
     }
   }, [socketRef.current]);
@@ -212,9 +224,6 @@ export function Provider({ children }: Props) {
     toast.success(`${p.name} joined the game`, {
       position: 'bottom-left',
       duration: 3000,
-      style: {
-        width: '100px',
-      },
     });
   };
 
@@ -225,8 +234,16 @@ export function Provider({ children }: Props) {
     });
   };
 
-  const handleMessageAnnounced = (msg: string) => {
-    elonMuskTalk(msg);
+  const handleMessageAnnounced = (type: number, msg: string) => {
+    if (type === 0) {
+      toast(msg, {
+        icon: '📢',
+        position: 'top-left',
+        duration: 1000000,
+      });
+    } else if (type === 1) {
+      elonMuskTalk(msg);
+    }
   };
 
   // const handleTokenExchanged = (transaction: Transaction) => {

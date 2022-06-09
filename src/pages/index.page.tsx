@@ -18,7 +18,7 @@ const Home: NextPage = function Home() {
   };
 
   return (
-    <main className="bg-gray-100 min-h-screen h-screen min-h-screen">
+    <main className="bg-gray-100 min-h-screen min-h-screen">
       {!player && (
         <div className="h-full w-full flex items-center justify-center">
           <NameInputForm onSubmit={handleNameSubmit} />
