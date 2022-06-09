@@ -27,9 +27,10 @@ function Table({ player }: Props) {
         return 100;
       }
       const margin =
+        historyPrices[historyPrices.length - 1] -
         historyPrices[
           historyPrices.length > 10 ? historyPrices.length - 10 : 0
-        ] - historyPrices[historyPrices.length - 2];
+        ];
       return Math.round((margin / token.price) * 10000) / 100;
     },
     [tokenAmountMap]
@@ -118,14 +119,14 @@ function Table({ player }: Props) {
                 <Sparklines data={token.historyPrices}>
                   {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
                     <SparklinesLine
-                      color="red"
+                      color="green"
                       style={{
                         strokeWidth: 3,
                       }}
                     />
                   ) : (
                     <SparklinesLine
-                      color="green"
+                      color="red"
                       style={{
                         strokeWidth: 3,
                       }}
@@ -140,11 +141,11 @@ function Table({ player }: Props) {
               </td>
 
               {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
-                <td className="px-6 py-4 text-red-500">
+                <td className="px-6 py-4 text-green-500">
                   {`▲${getTokenPriceMarginPercentIn10Cycles(token)}%`}
                 </td>
               ) : (
-                <td className="px-6 py-4 text-green-500">
+                <td className="px-6 py-4 text-red-500">
                   {`▼${-getTokenPriceMarginPercentIn10Cycles(token)}%`}
                 </td>
               )}
