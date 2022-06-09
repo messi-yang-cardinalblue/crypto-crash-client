@@ -43,12 +43,14 @@ enum Events {
   PlayerJoined = 'PLAYER_JOINED',
   PlayerLeft = 'PLAYER_LEFT',
   TokenExchanged = 'TOKEN_EXCHANGED',
+  MessageAnnounced = 'MESSAGE_ANNOUNCED',
 }
 
 enum Actions {
   ExchangeToken = 'EXCHANGE_TOKEN',
   StopGame = 'STOP_GAME',
   StartGame = 'START_GAME',
+  AnnounceMessage = 'ANNOUNCE_MESSAGE',
 }
 
 type GameOfLibertyContextValue = {
@@ -151,6 +153,16 @@ export function Provider({ children }: Props) {
     }
   }, [socketRef.current]);
 
+  useEffect(() => {
+    if (socketRef.current) {
+      // @ts-ignore
+      window.ccSpeak = (msg: string) => {
+        // @ts-ignore
+        socketRef.current.emit(Actions.AnnounceMessage, msg);
+      };
+    }
+  }, [socketRef.current]);
+
   const calculatePlayerAvatarNumber = (playerId: string): number => {
     const p = playerMap[playerId];
     if (!p) {
@@ -212,6 +224,13 @@ export function Provider({ children }: Props) {
     });
   };
 
+  const handleMessageAnnounced = (msg: string) => {
+    toast.success(msg, {
+      position: 'top-left',
+      duration: 3000,
+    });
+  };
+
   // const handleTokenExchanged = (transaction: Transaction) => {
   //   const p = playerMap[transaction.playerId];
   //   const t = tokenMap[transaction.tokenId];
@@ -248,6 +267,7 @@ export function Provider({ children }: Props) {
       socketRef.current.on(Events.PlayerUpdated, handlePlayerUpdated);
       socketRef.current.on(Events.PlayerJoined, handlePlayerJoined);
       socketRef.current.on(Events.PlayerLeft, handlePlayerLeft);
+      socketRef.current.on(Events.MessageAnnounced, handleMessageAnnounced);
       // socketRef.current.on(Events.TokenExchanged, handleTokenExchanged);
     }
 
@@ -256,7 +276,7 @@ export function Provider({ children }: Props) {
         socketRef.current.off(Events.GameUpdated, handleGameUpdated);
         socketRef.current.off(Events.PlayerUpdated, handlePlayerUpdated);
         socketRef.current.off(Events.PlayerJoined, handlePlayerJoined);
-        socketRef.current.off(Events.PlayerLeft, handlePlayerLeft);
+        socketRef.current.off(Events.MessageAnnounced, handleMessageAnnounced);
         // socketRef.current.off(Events.TokenExchanged, handleTokenExchanged);
       }
     };
