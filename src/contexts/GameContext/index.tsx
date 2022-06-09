@@ -47,6 +47,8 @@ enum Events {
 
 enum Actions {
   ExchangeToken = 'EXCHANGE_TOKEN',
+  StopGame = 'STOP_GAME',
+  StartGame = 'START_GAME',
 }
 
 type GameOfLibertyContextValue = {
@@ -128,6 +130,26 @@ export function Provider({ children }: Props) {
       socketRef.current.emit(Actions.ExchangeToken, tokenId, amount);
     }
   }, []);
+
+  useEffect(() => {
+    if (socketRef.current) {
+      // @ts-ignore
+      window.ccStop = () => {
+        // @ts-ignore
+        socketRef.current.emit(Actions.StopGame);
+      };
+    }
+  }, [socketRef.current]);
+
+  useEffect(() => {
+    if (socketRef.current) {
+      // @ts-ignore
+      window.ccStart = () => {
+        // @ts-ignore
+        socketRef.current.emit(Actions.StartGame);
+      };
+    }
+  }, [socketRef.current]);
 
   const calculatePlayerAvatarNumber = (playerId: string): number => {
     const p = playerMap[playerId];
