@@ -24,7 +24,7 @@ export type Token = {
   id: string;
   name: string;
   price: number;
-  percentsInPastDays: number[];
+  historyPrices: number[];
 };
 
 type Transaction = {
