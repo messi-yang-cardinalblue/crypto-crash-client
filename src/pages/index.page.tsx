@@ -16,7 +16,7 @@ const Home: NextPage = function Home() {
   }, []);
 
   return (
-    <main>
+    <main className="bg-gray-100 min-h-screen min-h-screen">
       {player && (
         <div className="flex flex-row">
           <div className="p-5" style={{ flexGrow: '5' }}>

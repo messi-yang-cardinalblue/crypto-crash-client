@@ -41,6 +41,7 @@ enum Events {
   PlayerUpdated = 'PLAYER_UPDATED',
   PlayerJoined = 'PLAYER_JOINED',
   PlayerLeft = 'PLAYER_LEFT',
+  TokenExchanged = 'TOKEN_EXCHANGED',
 }
 
 enum Actions {
@@ -86,6 +87,7 @@ export function Provider({ children }: Props) {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [connected, setConnected] = useState<boolean>(false);
   const socketRef = useRef<Socket | null>(null);
 
   const playerMap: { [playerId: string]: Player } = {};
@@ -104,8 +106,12 @@ export function Provider({ children }: Props) {
         auth: {
           authorization: sessionStorage.getItem('auth_token'),
         },
+        query: {
+          name: 'Hello World',
+        },
       });
       socketRef.current = newSocket;
+      setConnected(true);
     }
   }, [serverUrl]);
 
@@ -126,38 +132,70 @@ export function Provider({ children }: Props) {
     return Math.round(property * 100) / 100;
   };
 
-  useEffect(() => {
-    if (socketRef.current) {
-      socketRef.current.on(Events.LoggedIn, (p: Player, token: string) => {
-        setPlayer(p);
-        sessionStorage.setItem('auth_token', token);
-      });
-      socketRef.current.on(
-        Events.GameUpdated,
-        (payload: {
-          tokens: Token[];
-          players: Player[];
-          transactions: Transaction[];
-        }) => {
-          setTokens(payload.tokens);
-          setPlayers(payload.players);
-          setTransactions(payload.transactions);
-        }
-      );
-      socketRef.current.on(Events.PlayerUpdated, (p: Player) => {
-        toast.success('hi', {
-          position: 'bottom-left',
-        });
-        setPlayer(p);
-      });
-      socketRef.current.on(Events.PlayerJoined, () => {
-        // console.log(msg);
-      });
-      socketRef.current.on(Events.PlayerLeft, () => {
-        // console.log(msg);
-      });
+  const handlePlayerUpdated = (p: Player) => {
+    setPlayer(p);
+  };
+
+  const handlePlayerJoined = () => {
+    // console.log(msg);
+  };
+
+  const handlePlayerLeft = () => {
+    // console.log(msg);
+  };
+
+  const handleTokenExchanged = (transaction: Transaction) => {
+    const p = playerMap[transaction.playerId];
+    const t = tokenMap[transaction.tokenId];
+    console.log(transaction.playerId, playerMap);
+    let msg = '';
+    if (transaction.amount > 0) {
+      msg = `${p.name} bought "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
+    } else {
+      msg = `${p.name} sold "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
     }
-  }, [socketRef.current]);
+    toast.success(msg, {
+      position: 'bottom-left',
+      duration: 3000,
+    });
+  };
+
+  const handleGameUpdated = (payload: {
+    tokens: Token[];
+    players: Player[];
+    transactions: Transaction[];
+  }) => {
+    setTokens(payload.tokens);
+    setPlayers(payload.players);
+    setTransactions(payload.transactions);
+  };
+
+  const handleLoggedIn = (p: Player, token: string) => {
+    setPlayer(p);
+    sessionStorage.setItem('auth_token', token);
+  };
+
+  useEffect(() => {
+    if (connected && socketRef.current) {
+      socketRef.current.on(Events.LoggedIn, handleLoggedIn);
+      socketRef.current.on(Events.GameUpdated, handleGameUpdated);
+      socketRef.current.on(Events.PlayerUpdated, handlePlayerUpdated);
+      socketRef.current.on(Events.PlayerJoined, handlePlayerJoined);
+      socketRef.current.on(Events.PlayerLeft, handlePlayerLeft);
+      socketRef.current.on(Events.TokenExchanged, handleTokenExchanged);
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off(Events.LoggedIn, handleLoggedIn);
+        socketRef.current.off(Events.GameUpdated, handleGameUpdated);
+        socketRef.current.off(Events.PlayerUpdated, handlePlayerUpdated);
+        socketRef.current.off(Events.PlayerJoined, handlePlayerJoined);
+        socketRef.current.off(Events.PlayerLeft, handlePlayerLeft);
+        socketRef.current.off(Events.TokenExchanged, handleTokenExchanged);
+      }
+    };
+  });
 
   const gameOfLibertyContextValue = useMemo<GameOfLibertyContextValue>(
     () => ({
