@@ -142,6 +142,9 @@ export function Provider({ children }: Props) {
     toast.success(`${p.name} joined the game`, {
       position: 'bottom-left',
       duration: 3000,
+      style: {
+        width: '100px',
+      },
     });
   };
 

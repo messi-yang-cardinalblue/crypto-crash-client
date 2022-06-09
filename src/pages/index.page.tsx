@@ -24,7 +24,7 @@ const Home: NextPage = function Home() {
         </div>
       )}
       {player && (
-        <div className="flex flex-col">
+        <div className="flex flex-col pl-96">
           <div className="p-5" style={{ flexGrow: '5' }}>
             <TokenTable player={player} />
           </div>
