@@ -1,8 +1,9 @@
 import { useContext } from 'react';
+import accounting from 'accounting';
 import GameContext from '@/contexts/GameContext';
 
 function Table() {
-  const { players, calculatePlayerTokensProperty } = useContext(GameContext);
+  const { players, calculatePlayerPortfolioValue } = useContext(GameContext);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -10,24 +11,27 @@ function Table() {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
-              User name
+              Rank
             </th>
             <th scope="col" className="px-6 py-3">
-              Rank
+              User name
             </th>
             <th scope="col" className="px-6 py-3">
               Cash
             </th>
             <th scope="col" className="px-6 py-3">
-              Tokens Property
+              Portfolio Value
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Total
             </th>
           </tr>
         </thead>
         <tbody>
           {players
             .sort((playerA, playerB): number => {
-              const tokenPropertyA = calculatePlayerTokensProperty(playerA.id);
-              const tokenPropertyB = calculatePlayerTokensProperty(playerB.id);
+              const tokenPropertyA = calculatePlayerPortfolioValue(playerA.id);
+              const tokenPropertyB = calculatePlayerPortfolioValue(playerB.id);
               const propertyA = playerA.cash + tokenPropertyA;
               const propertyB = playerB.cash + tokenPropertyB;
               return propertyB - propertyA;
@@ -37,18 +41,25 @@ function Table() {
                 key={player.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
-                >
-                  {player.name}
+                <th scope="row" className="px-6 py-4">
+                  {playerIdx + 1}
                 </th>
-                <td className="px-6 py-4">{playerIdx + 1}</td>
-                <td className="px-6 py-4">
-                  {Math.round(player.cash * 100) / 100}
+                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                  {player.name}
                 </td>
                 <td className="px-6 py-4">
-                  {calculatePlayerTokensProperty(player.id)}
+                  {accounting.formatMoney(Math.round(player.cash * 100) / 100)}
+                </td>
+                <td className="px-6 py-4">
+                  {accounting.formatMoney(
+                    calculatePlayerPortfolioValue(player.id)
+                  )}
+                </td>
+                <td className="px-6 py-4">
+                  {accounting.formatMoney(
+                    Math.round(player.cash * 100) / 100 +
+                      calculatePlayerPortfolioValue(player.id)
+                  )}
                 </td>
               </tr>
             ))}

@@ -20,7 +20,7 @@ export type Player = {
   };
 };
 
-type Token = {
+export type Token = {
   id: string;
   name: string;
   price: number;
@@ -36,7 +36,6 @@ type Transaction = {
 };
 
 enum Events {
-  LoggedIn = 'LOGGED_IN',
   GameUpdated = 'GAME_UPDATED',
   PlayerUpdated = 'PLAYER_UPDATED',
   PlayerJoined = 'PLAYER_JOINED',
@@ -55,7 +54,7 @@ type GameOfLibertyContextValue = {
   transactions: Transaction[];
   login: (name: string) => void;
   exchangeToken: (tokenId: string, amount: number) => void;
-  calculatePlayerTokensProperty: (playerId: string) => number;
+  calculatePlayerPortfolioValue: (playerId: string) => number;
 };
 
 function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
@@ -66,7 +65,7 @@ function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
     transactions: [],
     login: () => {},
     exchangeToken: () => {},
-    calculatePlayerTokensProperty: () => 0,
+    calculatePlayerPortfolioValue: () => 0,
   };
 }
 
@@ -124,7 +123,7 @@ export function Provider({ children }: Props) {
     }
   }, []);
 
-  const calculatePlayerTokensProperty = (playerId: string): number => {
+  const calculatePlayerPortfolioValue = (playerId: string): number => {
     const p = playerMap[playerId];
     let property = 0;
     Object.keys(p.tokenOwnerships).forEach((tokenId) => {
@@ -139,12 +138,18 @@ export function Provider({ children }: Props) {
     setPlayer(p);
   };
 
-  const handlePlayerJoined = () => {
-    // console.log(msg);
+  const handlePlayerJoined = (p: Player) => {
+    toast.success(`${p.name} joined the game`, {
+      position: 'bottom-left',
+      duration: 3000,
+    });
   };
 
-  const handlePlayerLeft = () => {
-    // console.log(msg);
+  const handlePlayerLeft = (p: Player) => {
+    toast.success(`${p.name} left the game`, {
+      position: 'bottom-left',
+      duration: 3000,
+    });
   };
 
   const handleTokenExchanged = (transaction: Transaction) => {
@@ -154,7 +159,9 @@ export function Provider({ children }: Props) {
     if (transaction.amount > 0) {
       msg = `${p.name} bought "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
     } else {
-      msg = `${p.name} sold "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
+      msg = `${p.name} sold "${-transaction.amount} ${t.name}" at "$${
+        transaction.price
+      }"`;
     }
     toast.success(msg, {
       position: 'bottom-left',
@@ -172,14 +179,8 @@ export function Provider({ children }: Props) {
     setTransactions(payload.transactions);
   };
 
-  const handleLoggedIn = (p: Player, token: string) => {
-    setPlayer(p);
-    sessionStorage.setItem('auth_token', token);
-  };
-
   useEffect(() => {
     if (connected && socketRef.current) {
-      socketRef.current.on(Events.LoggedIn, handleLoggedIn);
       socketRef.current.on(Events.GameUpdated, handleGameUpdated);
       socketRef.current.on(Events.PlayerUpdated, handlePlayerUpdated);
       socketRef.current.on(Events.PlayerJoined, handlePlayerJoined);
@@ -189,7 +190,6 @@ export function Provider({ children }: Props) {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.off(Events.LoggedIn, handleLoggedIn);
         socketRef.current.off(Events.GameUpdated, handleGameUpdated);
         socketRef.current.off(Events.PlayerUpdated, handlePlayerUpdated);
         socketRef.current.off(Events.PlayerJoined, handlePlayerJoined);
@@ -207,7 +207,7 @@ export function Provider({ children }: Props) {
       transactions,
       login,
       exchangeToken,
-      calculatePlayerTokensProperty,
+      calculatePlayerPortfolioValue,
     }),
     [player, tokens, players, transactions]
   );

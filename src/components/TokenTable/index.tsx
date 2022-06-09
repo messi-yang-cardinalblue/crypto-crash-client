@@ -1,21 +1,53 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
+import accounting from 'accounting';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
-import GameContext, { Player } from '@/contexts/GameContext';
+import GameContext, { Player, Token } from '@/contexts/GameContext';
+import QuantityInput from './QuantityInput';
 
 type Props = {
   player: Player | null;
 };
 
+type TokenAmountMap = {
+  [tokenId: string]: number;
+};
+const initialAmount = 1;
 function Table({ player }: Props) {
   const { tokens, exchangeToken } = useContext(GameContext);
+  const [tokenAmountMap, setTokenAmountMap] = useState<TokenAmountMap>({});
 
-  const handleBuyClick = useCallback((tokenId: string, amount: number) => {
-    exchangeToken(tokenId, amount);
-  }, []);
+  const handleQuantityInput = useCallback(
+    (tokenId: string, amount: number) => {
+      setTokenAmountMap({ ...tokenAmountMap, [tokenId]: amount });
+    },
+    [tokenAmountMap]
+  );
 
-  const handleSellClick = useCallback((tokenId: string, amount: number) => {
-    exchangeToken(tokenId, -amount);
-  }, []);
+  const handleBuyClick = useCallback(
+    (tokenId: string) => {
+      const amount = tokenAmountMap[tokenId] || initialAmount;
+      exchangeToken(tokenId, amount);
+    },
+    [tokenAmountMap]
+  );
+
+  const getEstimatedPrice = useCallback(
+    (token: Token): string => {
+      const amount = tokenAmountMap[token.id] || initialAmount;
+      return accounting.formatMoney(
+        Math.round(amount * token.price * 100) / 100
+      );
+    },
+    [tokenAmountMap]
+  );
+
+  const handleSellClick = useCallback(
+    (tokenId: string) => {
+      const amount = tokenAmountMap[tokenId] || initialAmount;
+      exchangeToken(tokenId, -amount);
+    },
+    [tokenAmountMap]
+  );
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -29,16 +61,22 @@ function Table({ player }: Props) {
               Price
             </th>
             <th scope="col" className="px-6 py-3">
-              Owns
-            </th>
-            <th scope="col" className="px-6 py-3">
               chart
             </th>
             <th scope="col" className="px-6 py-3">
               24hr Change
             </th>
             <th scope="col" className="px-6 py-3">
-              <span className="sr-only">Edit</span>
+              Owned Quantity
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Quantity For Trade
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Estimated Price
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Action
             </th>
           </tr>
         </thead>
@@ -54,9 +92,8 @@ function Table({ player }: Props) {
               >
                 {token.name}
               </th>
-              <td className="px-6 py-4">{token.price}</td>
               <td className="px-6 py-4">
-                {player?.tokenOwnerships[token.id].amount}
+                {accounting.formatMoney(token.price)}
               </td>
               <td className="px-6 py-4">
                 <Sparklines data={[5, 10, 5, 3, 5, 10, 5, 3, 5, 10, 5, 3]}>
@@ -70,13 +107,24 @@ function Table({ player }: Props) {
               </td>
 
               <td className="px-6 py-4 text-red-500">-0.4%</td>
-              <td className="px-6 py-4 text-right">
+              <td className="px-6 py-4">
+                {player?.tokenOwnerships[token.id].amount}
+              </td>
+              <td className="px-6 py-4">
+                <QuantityInput
+                  onMoneyChange={(amount: number) => {
+                    handleQuantityInput(token.id, amount);
+                  }}
+                />
+              </td>
+              <td className="px-6 py-4">{getEstimatedPrice(token)}</td>
+              <td className="px-6 py-4">
                 <div className="inline-flex rounded-md shadow-sm" role="group">
                   <button
                     type="button"
                     className="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-l-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                     onClick={() => {
-                      handleBuyClick(token.id, 1);
+                      handleBuyClick(token.id);
                     }}
                   >
                     Buy
@@ -85,7 +133,7 @@ function Table({ player }: Props) {
                     type="button"
                     className="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-r-md border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                     onClick={() => {
-                      handleSellClick(token.id, 1);
+                      handleSellClick(token.id);
                     }}
                   >
                     Sell

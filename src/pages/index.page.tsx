@@ -24,12 +24,12 @@ const Home: NextPage = function Home() {
         </div>
       )}
       {player && (
-        <div className="flex flex-row">
-          <div className="p-5" style={{ flexGrow: '5' }}>
-            <PlayerTable />
-          </div>
+        <div className="flex flex-col">
           <div className="p-5" style={{ flexGrow: '5' }}>
             <TokenTable player={player} />
+          </div>
+          <div className="p-5" style={{ flexGrow: '5' }}>
+            <PlayerTable />
           </div>
         </div>
       )}
