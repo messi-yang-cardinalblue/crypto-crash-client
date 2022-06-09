@@ -96,7 +96,7 @@ function Table({ player }: Props) {
                 {accounting.formatMoney(token.price)}
               </td>
               <td className="px-6 py-4">
-                <Sparklines data={[5, 10, 5, 3, 5, 10, 5, 3, 5, 10, 5, 3]}>
+                <Sparklines data={token.percentsInPastDays}>
                   <SparklinesLine
                     color="red"
                     style={{
@@ -106,7 +106,11 @@ function Table({ player }: Props) {
                 </Sparklines>
               </td>
 
-              <td className="px-6 py-4 text-red-500">-0.4%</td>
+              <td className="px-6 py-4 text-red-500">
+                {token.percentsInPastDays[
+                  token.percentsInPastDays.length - 1
+                ] || 0}
+              </td>
               <td className="px-6 py-4">
                 {player?.tokenOwnerships[token.id].amount}
               </td>

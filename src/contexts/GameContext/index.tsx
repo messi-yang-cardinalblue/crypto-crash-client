@@ -24,6 +24,7 @@ export type Token = {
   id: string;
   name: string;
   price: number;
+  percentsInPastDays: number[];
 };
 
 type Transaction = {
@@ -158,6 +159,9 @@ export function Provider({ children }: Props) {
   const handleTokenExchanged = (transaction: Transaction) => {
     const p = playerMap[transaction.playerId];
     const t = tokenMap[transaction.tokenId];
+    if (!p || !t) {
+      return;
+    }
     let msg = '';
     if (transaction.amount > 0) {
       msg = `${p.name} bought "${transaction.amount} ${t.name}" at "$${transaction.price}"`;
