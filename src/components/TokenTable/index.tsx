@@ -30,7 +30,7 @@ function Table({ player }: Props) {
         historyPrices[
           historyPrices.length > 10 ? historyPrices.length - 10 : 0
         ] - historyPrices[historyPrices.length - 2];
-      return Math.round(margin * 100) / 100;
+      return Math.round((margin / token.price) * 10000) / 100;
     },
     [tokenAmountMap]
   );
@@ -80,7 +80,7 @@ function Table({ player }: Props) {
               Price
             </th>
             <th scope="col" className="px-6 py-3">
-              chart
+              Trend in 10 Seconds
             </th>
             <th scope="col" className="px-6 py-3">
               Changes in 10 Seconds
@@ -116,14 +116,25 @@ function Table({ player }: Props) {
               </td>
               <td className="px-1 py-1">
                 <Sparklines data={token.historyPrices}>
-                  <SparklinesLine
-                    style={{
-                      strokeWidth: 3,
-                    }}
-                  />
+                  {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
+                    <SparklinesLine
+                      color="red"
+                      style={{
+                        strokeWidth: 3,
+                      }}
+                    />
+                  ) : (
+                    <SparklinesLine
+                      color="green"
+                      style={{
+                        strokeWidth: 3,
+                      }}
+                    />
+                  )}
+
                   <SparklinesReferenceLine
                     type="avg"
-                    style={{ stroke: 'yellow', strokeWidth: 1, fill: 'none' }}
+                    style={{ stroke: 'white', strokeWidth: 1, fill: 'none' }}
                   />
                 </Sparklines>
               </td>
