@@ -9,6 +9,7 @@ import {
 import toast from 'react-hot-toast';
 import { io, Socket } from 'socket.io-client';
 import { hashFnv32a } from '@/utils/common';
+import elonMuskTalk from './elonMuskTalk';
 
 export type Player = {
   id: string;
@@ -225,10 +226,7 @@ export function Provider({ children }: Props) {
   };
 
   const handleMessageAnnounced = (msg: string) => {
-    toast.success(msg, {
-      position: 'top-left',
-      duration: 3000,
-    });
+    elonMuskTalk(msg);
   };
 
   // const handleTokenExchanged = (transaction: Transaction) => {
