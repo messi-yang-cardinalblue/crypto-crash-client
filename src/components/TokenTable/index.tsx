@@ -1,8 +1,12 @@
 import { useCallback, useContext } from 'react';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
-import GameContext from '@/contexts/GameContext';
+import GameContext, { Player } from '@/contexts/GameContext';
 
-function Table() {
+type Props = {
+  player: Player | null;
+};
+
+function Table({ player }: Props) {
   const { tokens, exchangeToken } = useContext(GameContext);
 
   const handleBuyClick = useCallback((tokenId: string, amount: number) => {
@@ -19,10 +23,13 @@ function Table() {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
-              Product name
+              Token
             </th>
             <th scope="col" className="px-6 py-3">
               Price
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Owns
             </th>
             <th scope="col" className="px-6 py-3">
               chart
@@ -49,7 +56,10 @@ function Table() {
               </th>
               <td className="px-6 py-4">{token.price}</td>
               <td className="px-6 py-4">
-                <Sparklines data={[5, 10, 5, 0]}>
+                {player?.tokenOwnerships[token.id].amount}
+              </td>
+              <td className="px-6 py-4">
+                <Sparklines data={[5, 10, 5, 3, 5, 10, 5, 3, 5, 10, 5, 3]}>
                   <SparklinesLine
                     color="red"
                     style={{

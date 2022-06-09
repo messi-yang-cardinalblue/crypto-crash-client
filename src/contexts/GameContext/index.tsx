@@ -6,25 +6,24 @@ import {
   useRef,
   useEffect,
 } from 'react';
+import toast from 'react-hot-toast';
 import { io, Socket } from 'socket.io-client';
 
-type Player = {
+export type Player = {
   id: string;
   name: string;
   cash: number;
+  tokenOwnerships: {
+    [tokenId: string]: {
+      amount: number;
+    };
+  };
 };
 
 type Token = {
   id: string;
   name: string;
   price: number;
-};
-
-type Ownership = {
-  id: string;
-  playerId: string;
-  tokenId: string;
-  amount: number;
 };
 
 type Transaction = {
@@ -39,6 +38,7 @@ type Transaction = {
 enum Events {
   LoggedIn = 'LOGGED_IN',
   GameUpdated = 'GAME_UPDATED',
+  PlayerUpdated = 'PLAYER_UPDATED',
   PlayerJoined = 'PLAYER_JOINED',
   PlayerLeft = 'PLAYER_LEFT',
 }
@@ -52,9 +52,9 @@ type GameOfLibertyContextValue = {
   tokens: Token[];
   players: Player[];
   transactions: Transaction[];
-  ownerships: Ownership[];
   login: () => void;
   exchangeToken: (tokenId: string, amount: number) => void;
+  calculatePlayerTokensProperty: (playerId: string) => number;
 };
 
 function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
@@ -63,9 +63,9 @@ function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
     tokens: [],
     players: [],
     transactions: [],
-    ownerships: [],
     login: () => {},
     exchangeToken: () => {},
+    calculatePlayerTokensProperty: () => 0,
   };
 }
 
@@ -86,8 +86,17 @@ export function Provider({ children }: Props) {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [ownerships, setOwnerships] = useState<Ownership[]>([]);
   const socketRef = useRef<Socket | null>(null);
+
+  const playerMap: { [playerId: string]: Player } = {};
+  players.forEach((p) => {
+    playerMap[p.id] = p;
+  });
+
+  const tokenMap: { [tokenId: string]: Token } = {};
+  tokens.forEach((t) => {
+    tokenMap[t.id] = t;
+  });
 
   const login = useCallback(() => {
     if (serverUrl) {
@@ -106,6 +115,17 @@ export function Provider({ children }: Props) {
     }
   }, []);
 
+  const calculatePlayerTokensProperty = (playerId: string): number => {
+    const p = playerMap[playerId];
+    let property = 0;
+    Object.keys(p.tokenOwnerships).forEach((tokenId) => {
+      const ownership = p.tokenOwnerships[tokenId];
+      const token = tokenMap[tokenId];
+      property += ownership.amount * token.price;
+    });
+    return Math.round(property * 100) / 100;
+  };
+
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.on(Events.LoggedIn, (p: Player, token: string) => {
@@ -117,15 +137,19 @@ export function Provider({ children }: Props) {
         (payload: {
           tokens: Token[];
           players: Player[];
-          ownerships: Ownership[];
           transactions: Transaction[];
         }) => {
           setTokens(payload.tokens);
           setPlayers(payload.players);
-          setOwnerships(payload.ownerships);
           setTransactions(payload.transactions);
         }
       );
+      socketRef.current.on(Events.PlayerUpdated, (p: Player) => {
+        toast.success('hi', {
+          position: 'bottom-left',
+        });
+        setPlayer(p);
+      });
       socketRef.current.on(Events.PlayerJoined, () => {
         // console.log(msg);
       });
@@ -141,11 +165,11 @@ export function Provider({ children }: Props) {
       tokens,
       players,
       transactions,
-      ownerships,
       login,
       exchangeToken,
+      calculatePlayerTokensProperty,
     }),
-    [player, tokens, transactions, ownerships]
+    [player, tokens, players, transactions]
   );
 
   return (
