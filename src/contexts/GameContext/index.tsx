@@ -8,6 +8,7 @@ import {
 } from 'react';
 import toast from 'react-hot-toast';
 import { io, Socket } from 'socket.io-client';
+import { hashFnv32a } from '@/utils/common';
 
 export type Player = {
   id: string;
@@ -56,6 +57,8 @@ type GameOfLibertyContextValue = {
   login: (name: string) => void;
   exchangeToken: (tokenId: string, amount: number) => void;
   calculatePlayerPortfolioValue: (playerId: string) => number;
+  calculateRank: (playerId: string) => number;
+  calculatePlayerAvatarNumber: (playerId: string) => number;
 };
 
 function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
@@ -67,6 +70,8 @@ function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
     login: () => {},
     exchangeToken: () => {},
     calculatePlayerPortfolioValue: () => 0,
+    calculateRank: () => 0,
+    calculatePlayerAvatarNumber: () => 0,
   };
 }
 
@@ -124,8 +129,20 @@ export function Provider({ children }: Props) {
     }
   }, []);
 
+  const calculatePlayerAvatarNumber = (playerId: string): number => {
+    const p = playerMap[playerId];
+    if (!p) {
+      return 0;
+    }
+
+    return hashFnv32a(p?.id);
+  };
+
   const calculatePlayerPortfolioValue = (playerId: string): number => {
     const p = playerMap[playerId];
+    if (!p) {
+      return 0;
+    }
     let property = 0;
     Object.keys(p.tokenOwnerships).forEach((tokenId) => {
       const ownership = p.tokenOwnerships[tokenId];
@@ -133,6 +150,23 @@ export function Provider({ children }: Props) {
       property += ownership.amount * token.price;
     });
     return Math.round(property * 100) / 100;
+  };
+
+  const calculateRank = (playerId: string): number => {
+    const p = playerMap[playerId];
+    if (!p) {
+      return 0;
+    }
+
+    return (
+      players
+        .sort((pA, pB) => {
+          const totalValueA = pA.cash + calculatePlayerPortfolioValue(pA.id);
+          const totalValueB = pB.cash + calculatePlayerPortfolioValue(pB.id);
+          return totalValueB - totalValueA;
+        })
+        .findIndex((pFinal) => pFinal.id === playerId) + 1
+    );
   };
 
   const handlePlayerUpdated = (p: Player) => {
@@ -215,6 +249,8 @@ export function Provider({ children }: Props) {
       login,
       exchangeToken,
       calculatePlayerPortfolioValue,
+      calculateRank,
+      calculatePlayerAvatarNumber,
     }),
     [player, tokens, players, transactions]
   );

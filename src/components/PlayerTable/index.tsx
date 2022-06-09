@@ -3,7 +3,11 @@ import accounting from 'accounting';
 import GameContext from '@/contexts/GameContext';
 
 function Table() {
-  const { players, calculatePlayerPortfolioValue } = useContext(GameContext);
+  const {
+    players,
+    calculatePlayerPortfolioValue,
+    calculatePlayerAvatarNumber,
+  } = useContext(GameContext);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -45,7 +49,18 @@ function Table() {
                   {playerIdx + 1}
                 </th>
                 <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                  {player.name}
+                  <div className="flex items-center">
+                    {player && (
+                      <img
+                        className="w-8 h-8 rounded-full shadow-md"
+                        src={`https://avatars.dicebear.com/api/pixel-art/${calculatePlayerAvatarNumber(
+                          player.id
+                        )}.svg`}
+                        alt="avatar"
+                      />
+                    )}
+                    <span className="ml-2">{player.name}</span>
+                  </div>
                 </td>
                 <td className="px-6 py-4">
                   {accounting.formatMoney(Math.round(player.cash * 100) / 100)}

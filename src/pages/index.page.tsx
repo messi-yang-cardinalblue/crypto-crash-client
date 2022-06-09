@@ -6,6 +6,7 @@ import { wrapper } from '@/stores';
 import PlayerTable from '@/components/PlayerTable';
 import TokenTable from '@/components/TokenTable';
 import NameInputForm from '@/components/NameInputForm';
+import Profile from '@/components/Profile';
 import GameContext from '@/contexts/GameContext';
 import { getInitialLocale } from '@/utils/i18n';
 
@@ -24,11 +25,12 @@ const Home: NextPage = function Home() {
         </div>
       )}
       {player && (
-        <div className="flex flex-col pl-96">
-          <div className="p-5" style={{ flexGrow: '5' }}>
-            <TokenTable player={player} />
+        <div className="flex flex-col gap-y-5 pl-96 pt-5 pr-5 pb-5">
+          <Profile />
+          <div style={{ flexGrow: '5' }}>
+            <TokenTable />
           </div>
-          <div className="p-5" style={{ flexGrow: '5' }}>
+          <div style={{ flexGrow: '5' }}>
             <PlayerTable />
           </div>
         </div>

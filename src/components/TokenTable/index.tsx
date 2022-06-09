@@ -5,19 +5,15 @@ import {
   SparklinesLine,
   SparklinesReferenceLine,
 } from 'react-sparklines';
-import GameContext, { Player, Token } from '@/contexts/GameContext';
+import GameContext, { Token } from '@/contexts/GameContext';
 import QuantityInput from './QuantityInput';
-
-type Props = {
-  player: Player | null;
-};
 
 type TokenAmountMap = {
   [tokenId: string]: number;
 };
 const initialAmount = 1;
-function Table({ player }: Props) {
-  const { tokens, exchangeToken } = useContext(GameContext);
+function Table() {
+  const { player, tokens, exchangeToken } = useContext(GameContext);
   const [tokenAmountMap, setTokenAmountMap] = useState<TokenAmountMap>({});
 
   const getTokenPriceMarginPercentIn10Cycles = useCallback(

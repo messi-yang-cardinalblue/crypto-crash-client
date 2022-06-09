@@ -17,6 +17,9 @@ const nextConfig = {
   env: {
     SERVER_URL: process.env.SERVER_URL,
   },
+  images: {
+    domains: ['avatars.dicebear.com'],
+  },
   dir: './src',
 };
 

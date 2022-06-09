@@ -20,7 +20,7 @@ function QuantityInput({ onMoneyChange }: Props) {
     <input
       className="shadow appearance-none border rounded w-28 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       type="number"
-      step="0.01"
+      step="1"
       min={0}
       value={money}
       onChange={handleInput}
