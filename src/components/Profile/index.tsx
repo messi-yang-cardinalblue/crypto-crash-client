@@ -38,9 +38,9 @@ function Portfolio({ player }: Props) {
         </div>
         <div className="flex items-center">
           <h5 className="mb-0 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {player
+            Cash: {player
               ? accounting.formatMoney(
-                  player.cash + calculatePlayerPortfolioValue(player.id),
+                  player.cash,
                   '$',
                   0
                 )
@@ -49,12 +49,12 @@ function Portfolio({ player }: Props) {
           <div className="mx-2" />
           {player && (
             <div className="mb-0 text-md h-5 text-gray-600 font-normal tracking-tight dark:text-white">
-              {`Cash: ${accounting.formatMoney(
-                player.cash,
+              {`+ Tokens: ${accounting.formatMoney(
+                calculatePlayerPortfolioValue(player.id),
                 '$',
                 0
-              )} + Tokens : ${accounting.formatMoney(
-                calculatePlayerPortfolioValue(player.id),
+              )} = Total: ${accounting.formatMoney(
+                player.cash + calculatePlayerPortfolioValue(player.id),
                 '$',
                 0
               )}`}
