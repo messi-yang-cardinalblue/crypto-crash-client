@@ -61,7 +61,8 @@ function Table({ onTokenChartClick }: Props) {
       const playerCash = Math.round(player.cash * 100) / 100;
       if (playerCash < price) {
         toast.error(
-          `You don't have enough cash, current cash: ${playerCash}, transaction amount: ${price}`
+          `You don't have enough cash, current cash: ${playerCash}, transaction amount: ${price}`,
+          { duration: 2000 }
         );
         return;
       }
@@ -94,7 +95,8 @@ function Table({ onTokenChartClick }: Props) {
             token.name
           } to sell, the amount you have: ${
             player.tokenOwnerships[token.id].amount
-          }`
+          }`,
+          { duration: 2000 }
         );
         return;
       }
@@ -146,11 +148,14 @@ function Table({ onTokenChartClick }: Props) {
               >
                 {token.name}
               </th>
-              <td className="px-6 py-4">
+              <td
+                className="px-6 py-4 cursor-pointer"
+                onClick={() => handleChartClick(token.id)}
+              >
                 {accounting.formatMoney(token.price, '$', 2)}
               </td>
               <td
-                className="px-1 py-1"
+                className="px-1 py-1 cursor-pointer"
                 onClick={() => handleChartClick(token.id)}
               >
                 <Sparklines
@@ -180,11 +185,17 @@ function Table({ onTokenChartClick }: Props) {
               </td>
 
               {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
-                <td className="px-6 py-4 text-green-500">
+                <td
+                  className="px-6 py-4 text-green-500 cursor-pointer"
+                  onClick={() => handleChartClick(token.id)}
+                >
                   {`▲${getTokenPriceMarginPercentIn10Cycles(token)}%`}
                 </td>
               ) : (
-                <td className="px-6 py-4 text-red-500">
+                <td
+                  className="px-6 py-4 text-red-500 cursor-pointer"
+                  onClick={() => handleChartClick(token.id)}
+                >
                   {`▼${-getTokenPriceMarginPercentIn10Cycles(token)}%`}
                 </td>
               )}
