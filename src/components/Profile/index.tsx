@@ -44,7 +44,7 @@ function Portfolio({ player }: Props) {
               ? accounting.formatMoney(
                   player.cash + calculatePlayerPortfolioValue(player.id),
                   '$',
-                  2
+                  0
                 )
               : 0}
           </h5>
@@ -54,11 +54,11 @@ function Portfolio({ player }: Props) {
               {`Cash: ${accounting.formatMoney(
                 player.cash,
                 '$',
-                2
+                0
               )} + Tokens : ${accounting.formatMoney(
                 calculatePlayerPortfolioValue(player.id),
                 '$',
-                2
+                0
               )}`}
             </div>
           )}
