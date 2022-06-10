@@ -28,6 +28,7 @@ export type Token = {
   name: string;
   price: number;
   historyPrices: number[];
+  _energy: number;
 };
 
 type Transaction = {
@@ -135,17 +136,14 @@ export function Provider({ children }: Props) {
         socketRef.current = newSocket;
         setConnected(true);
 
-        toast(
-          'Welcome to CRYPTO CRA$H.  Starting with $1,000 dollars, buy and sell crypto tokens to make more money!',
-          {
-            icon: '📢',
-            position: 'top-left',
-            duration: 10000,
-            style: {
-              width: '280px',
-            },
-          }
-        );
+        toast('Welcome to CRYPTO CRA$H!  Starting with $1,000 dollars, how much can you increase your portfolio value by buying and selling crypto tokens?', {
+          icon: '📢',
+          position: 'top-left',
+          duration: 10000,
+          style: {
+            width: '280px',
+          },
+        });
       }
     },
     [socketRef.current, serverUrl, connected]
