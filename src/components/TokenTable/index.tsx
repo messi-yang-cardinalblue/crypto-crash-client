@@ -29,12 +29,12 @@ function Table({ onTokenChartClick }: Props) {
       if (historyPrices.length < 2) {
         return 100;
       }
-      const basePrice =
+      const margin =
+        historyPrices[historyPrices.length - 1] -
         historyPrices[
           historyPrices.length > 10 ? historyPrices.length - 10 : 0
         ];
-      const margin = token.price - basePrice;
-      return Math.round((margin / basePrice) * 10000) / 100;
+      return Math.round((margin / token.price) * 10000) / 100;
     },
     [tokenAmountMap]
   );
@@ -87,6 +87,9 @@ function Table({ onTokenChartClick }: Props) {
               Token
             </th>
             <th scope="col" className="px-6 py-3">
+              Energy (Debug)
+            </th>
+            <th scope="col" className="px-6 py-3">
               Price
             </th>
             <th scope="col" className="px-6 py-3">
@@ -122,10 +125,13 @@ function Table({ onTokenChartClick }: Props) {
                 {token.name}
               </th>
               <td className="px-6 py-4">
+                {token._energy}
+              </td>
+              <td className="px-6 py-4">
                 {accounting.formatMoney(token.price, '$', 2)}
               </td>
               <td
-                className="px-1 py-1 cursor-pointer"
+                className="px-1 py-1"
                 onClick={() => handleChartClick(token.id)}
               >
                 <Sparklines
