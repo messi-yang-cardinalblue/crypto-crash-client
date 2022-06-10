@@ -128,18 +128,10 @@ export function Provider({ children }: Props) {
         socketRef.current = newSocket;
         setConnected(true);
 
-        toast('Everyone has 3 million dollars can join the game.', {
+        toast('Welcome to CRYPTO CRA$H.  Starting with $1,000 dollars, buy and sell crypto tokens to make more money!', {
           icon: '📢',
           position: 'top-left',
-          duration: 1000000,
-          style: {
-            width: '280px',
-          },
-        });
-        toast('任何人有三百萬美金都能參加。', {
-          icon: '📢',
-          position: 'top-left',
-          duration: 1000000,
+          duration: 100000,
           style: {
             width: '280px',
           },
