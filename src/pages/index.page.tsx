@@ -10,7 +10,8 @@ import TokenTable from '@/components/TokenTable';
 import TokenPriceChart from '@/components/TokenPriceChart';
 import NameInputForm from '@/components/NameInputForm';
 import Profile from '@/components/Profile';
-import GameContext, { Player } from '@/contexts/GameContext';
+import GameContext, { Player, Token } from '@/contexts/GameContext';
+import { getLastItemsFromArray } from '@/utils/common';
 import { getInitialLocale } from '@/utils/i18n';
 
 const Home: NextPage = function Home() {
@@ -42,6 +43,11 @@ const Home: NextPage = function Home() {
 
   const handleDisplayTokenChartModalClose = () => {
     setDisplayTokenChartModal(false);
+  };
+
+  const checkIfTokenIsWinning = (token: Token): boolean => {
+    const lastPrices = getLastItemsFromArray(token.historyPrices, 300);
+    return lastPrices[lastPrices.length - 1] - lastPrices[0] > 0;
   };
 
   return (
@@ -88,17 +94,24 @@ const Home: NextPage = function Home() {
           styles={{
             root: { zIndex: '9999' },
             modal: {
-              width: '50vw',
-              height: '50vh',
+              width: '500px',
               background: 'none',
               boxShadow: 'none',
+            },
+            closeIcon: {
+              color: 'white',
             },
           }}
           open
           onClose={handleDisplayTokenChartModalClose}
           center
         >
-          <TokenPriceChart token={requestedToken} />
+          <TokenPriceChart
+            width={500}
+            height={300}
+            winning={checkIfTokenIsWinning(requestedToken)}
+            data={getLastItemsFromArray(requestedToken.historyPrices, 300)}
+          />
         </Modal>
       )}
       <Toaster />
