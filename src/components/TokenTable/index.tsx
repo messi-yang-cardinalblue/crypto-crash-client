@@ -125,7 +125,7 @@ function Table({ onTokenChartClick }: Props) {
                 {accounting.formatMoney(token.price, '$', 2)}
               </td>
               <td
-                className="px-1 py-1"
+                className="px-1 py-1 cursor-pointer"
                 onClick={() => handleChartClick(token.id)}
               >
                 <Sparklines
