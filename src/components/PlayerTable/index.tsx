@@ -28,13 +28,13 @@ function Table({ onPlayerClick }: Props) {
             <th scope="col" className="px-6 py-3">
               User name
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-right">
               Cash
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-right">
               Tokens
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 text-right">
               Total
             </th>
           </tr>
@@ -73,21 +73,21 @@ function Table({ onPlayerClick }: Props) {
                     <span className="ml-2">{player.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-right">
                   {accounting.formatMoney(
                     Math.round(player.cash * 1) / 1,
                     '$',
                     0
                   )}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-right">
                   {accounting.formatMoney(
                     calculatePlayerPortfolioValue(player.id),
                     '$',
                     0
                   )}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-right">
                   {accounting.formatMoney(
                     Math.round(player.cash * 1) / 1 +
                       calculatePlayerPortfolioValue(player.id),

@@ -47,17 +47,15 @@ const Home: NextPage = function Home() {
   return (
     <main className="">
       {!player && (
-        <div>
-          <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-50">
-            <div className="w-4/5 max-w-screen-md flex flex-col items-center justify-center gap-y-20 gap-x-4">
-              <div className="text-6xl font-semibold text-gray-800">
-                Crypto Cra$h
-              </div>
-              <div className="text-lg font-normal text-center text-gray-500">
-                Welcome to Crypto Cra$h
-              </div>
-              <NameInputForm onSubmit={handleNameSubmit} />
+        <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-50">
+          <div className="w-4/5 max-w-screen-md flex flex-col items-center justify-center gap-y-20 gap-x-4">
+            <div className="text-6xl font-semibold text-gray-800">
+              Crypto Cra$h
             </div>
+            <div className="text-lg font-normal text-center text-gray-500">
+              Welcome to Crypto Cra$h
+            </div>
+            <NameInputForm onSubmit={handleNameSubmit} />
           </div>
         </div>
       )}

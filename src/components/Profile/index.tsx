@@ -13,8 +13,6 @@ function Portfolio({ player }: Props) {
     calculatePlayerAvatarNumber,
   } = useContext(GameContext);
 
-  console.log(player.id);
-
   return (
     <div className="flex items-center p-6 bg-white min-w-min rounded-lg border border-gray-300 shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <div className="w-24 h-24 mr-4">
