@@ -106,6 +106,7 @@ const Home: NextPage = function Home() {
           onClose={handleDisplayTokenChartModalClose}
           center
         >
+          <span>{requestedToken.name}</span>
           <TokenPriceChart
             width={500}
             height={300}

@@ -12,6 +12,12 @@
   animation: loop 3s ease infinite;
 }
 
+@layer base {
+  html {
+    font-family: 'Sora', sans-serif !important;
+  }
+}
+
 @keyframes loop {
   0%,
   100% {
@@ -26,7 +32,6 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Sora', sans-serif;
 }
 
 a {
