@@ -26,3 +26,10 @@ export function hashFnv32a(str: string, seed?: number): number {
   /* eslint-disable */
   return hval >>> 0;
 }
+
+export function getLastItemsFromArray<T>(items: T[], count: number) {
+  return items.slice(
+    items.length > count ? items.length - count : 0,
+    items.length
+  );
+}

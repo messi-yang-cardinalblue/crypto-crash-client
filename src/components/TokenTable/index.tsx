@@ -6,6 +6,7 @@ import {
   SparklinesReferenceLine,
 } from 'react-sparklines';
 import GameContext, { Token } from '@/contexts/GameContext';
+import { getLastItemsFromArray } from '@/utils/common';
 import QuantityInput from './QuantityInput';
 
 type TokenAmountMap = {
@@ -89,7 +90,7 @@ function Table({ onTokenChartClick }: Props) {
               Price
             </th>
             <th scope="col" className="px-6 py-3">
-              Trend 
+              Trend
             </th>
             <th scope="col" className="px-6 py-3">
               Recent change
@@ -127,7 +128,9 @@ function Table({ onTokenChartClick }: Props) {
                 className="px-1 py-1"
                 onClick={() => handleChartClick(token.id)}
               >
-                <Sparklines data={token.historyPrices}>
+                <Sparklines
+                  data={getLastItemsFromArray(token.historyPrices, 10)}
+                >
                   {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
                     <SparklinesLine
                       color="green"
