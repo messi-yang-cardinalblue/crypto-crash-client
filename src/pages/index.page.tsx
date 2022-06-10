@@ -7,15 +7,19 @@ import { wrapper } from '@/stores';
 import PlayerTable from '@/components/PlayerTable';
 import OtherPlayerTokenTable from '@/components/OtherPlayerTokenTable';
 import TokenTable from '@/components/TokenTable';
+import TokenPriceChart from '@/components/TokenPriceChart';
 import NameInputForm from '@/components/NameInputForm';
 import Profile from '@/components/Profile';
 import GameContext, { Player } from '@/contexts/GameContext';
 import { getInitialLocale } from '@/utils/i18n';
 
 const Home: NextPage = function Home() {
-  const { player, playerMap, login } = useContext(GameContext);
+  const { player, playerMap, requestedToken, login, requestTokenData } =
+    useContext(GameContext);
   const [otherPlayer, setOtherPlayer] = useState<Player | null>(null);
   const [displayOtherPlayerModal, setDisplayOtherPlayerModal] =
+    useState<boolean>(false);
+  const [displayTokenChartModal, setDisplayTokenChartModal] =
     useState<boolean>(false);
 
   const handleNameSubmit = (name: string) => {
@@ -27,22 +31,41 @@ const Home: NextPage = function Home() {
     setDisplayOtherPlayerModal(true);
   };
 
-  const handleModalClose = () => {
+  const handleDisplayOtherPlayerModalClose = () => {
     setDisplayOtherPlayerModal(false);
   };
 
+  const handleChartClick = (tokenId: string) => {
+    requestTokenData(tokenId);
+    setDisplayTokenChartModal(true);
+  };
+
+  const handleDisplayTokenChartModalClose = () => {
+    setDisplayTokenChartModal(false);
+  };
+
   return (
-    <main className="bg-gray-100 min-h-screen min-h-screen">
+    <main className="">
       {!player && (
-        <div className="h-full w-full flex items-center justify-center">
-          <NameInputForm onSubmit={handleNameSubmit} />
+        <div>
+          <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-50">
+            <div className="w-4/5 max-w-screen-md flex flex-col items-center justify-center gap-y-20 gap-x-4">
+              <div className="text-6xl font-semibold text-gray-800">
+                Crypto Cra$h
+              </div>
+              <div className="text-lg font-normal text-center text-gray-500">
+                Welcome to Crypto Cra$h
+              </div>
+              <NameInputForm onSubmit={handleNameSubmit} />
+            </div>
+          </div>
         </div>
       )}
       {player && (
         <div className="flex flex-col gap-y-5 pl-80 pt-5 pr-5 pb-5">
           <Profile player={player} />
           <div style={{ flexGrow: '5' }}>
-            <TokenTable />
+            <TokenTable onTokenChartClick={handleChartClick} />
           </div>
           <div style={{ flexGrow: '5' }}>
             <PlayerTable onPlayerClick={handlePlayerClick} />
@@ -56,10 +79,28 @@ const Home: NextPage = function Home() {
             modal: { background: 'none', boxShadow: 'none' },
           }}
           open
-          onClose={handleModalClose}
+          onClose={handleDisplayOtherPlayerModalClose}
           center
         >
           <OtherPlayerTokenTable player={otherPlayer} />
+        </Modal>
+      )}
+      {requestedToken && displayTokenChartModal && (
+        <Modal
+          styles={{
+            root: { zIndex: '9999' },
+            modal: {
+              width: '50vw',
+              height: '50vh',
+              background: 'none',
+              boxShadow: 'none',
+            },
+          }}
+          open
+          onClose={handleDisplayTokenChartModalClose}
+          center
+        >
+          <TokenPriceChart token={requestedToken} />
         </Modal>
       )}
       <Toaster />

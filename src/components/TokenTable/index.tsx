@@ -11,8 +11,14 @@ import QuantityInput from './QuantityInput';
 type TokenAmountMap = {
   [tokenId: string]: number;
 };
+
+type Props = {
+  onTokenChartClick: (tokenId: string) => any;
+};
+
 const initialAmount = 1;
-function Table() {
+
+function Table({ onTokenChartClick }: Props) {
   const { player, tokens, exchangeToken } = useContext(GameContext);
   const [tokenAmountMap, setTokenAmountMap] = useState<TokenAmountMap>({});
 
@@ -38,6 +44,10 @@ function Table() {
     },
     [tokenAmountMap]
   );
+
+  const handleChartClick = useCallback((tokenId: string) => {
+    onTokenChartClick(tokenId);
+  }, []);
 
   const handleBuyClick = useCallback(
     (tokenId: string) => {
@@ -113,7 +123,10 @@ function Table() {
               <td className="px-6 py-4">
                 {accounting.formatMoney(token.price, '$', 3)}
               </td>
-              <td className="px-1 py-1">
+              <td
+                className="px-1 py-1"
+                onClick={() => handleChartClick(token.id)}
+              >
                 <Sparklines data={token.historyPrices}>
                   {getTokenPriceMarginPercentIn10Cycles(token) > 0 ? (
                     <SparklinesLine

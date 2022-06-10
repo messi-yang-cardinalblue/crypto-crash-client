@@ -46,6 +46,7 @@ enum Events {
   PlayerLeft = 'PLAYER_LEFT',
   TokenExchanged = 'TOKEN_EXCHANGED',
   MessageAnnounced = 'MESSAGE_ANNOUNCED',
+  TokenDataReturned = 'TOKEN_DATA_RETURNED',
 }
 
 enum Actions {
@@ -54,15 +55,18 @@ enum Actions {
   StartGame = 'START_GAME',
   AnnounceMessage = 'ANNOUNCE_MESSAGE',
   ResetGame = 'RESET_GAME',
+  RequestTokenDataData = 'REQUEST_TOKEN_DATA',
 }
 
 type GameOfLibertyContextValue = {
   player: Player | null;
   tokens: Token[];
+  requestedToken: Token | null;
   players: Player[];
   playerMap: { [playerId: string]: Player };
   transactions: Transaction[];
   login: (name: string) => void;
+  requestTokenData: (tokenId: string) => void;
   exchangeToken: (tokenId: string, amount: number) => void;
   calculatePlayerPortfolioValue: (playerId: string) => number;
   calculateRank: (playerId: string) => number;
@@ -73,11 +77,13 @@ function createInitialGameOfLibertyContextValue(): GameOfLibertyContextValue {
   return {
     player: null,
     tokens: [],
+    requestedToken: null,
     players: [],
     playerMap: {},
     transactions: [],
     login: () => {},
     exchangeToken: () => {},
+    requestTokenData: () => {},
     calculatePlayerPortfolioValue: () => 0,
     calculateRank: () => 0,
     calculatePlayerAvatarNumber: () => 0,
@@ -99,6 +105,7 @@ export function Provider({ children }: Props) {
   //   createInitialGameOfLibertyContextValue();
   const [player, setPlayer] = useState<Player | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
+  const [requestedToken, setRequestedToken] = useState<Token | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
@@ -116,7 +123,7 @@ export function Provider({ children }: Props) {
 
   const login = useCallback(
     (name: string) => {
-      if (serverUrl) {
+      if (!socketRef.current && serverUrl && !connected) {
         const newSocket = io(`${serverUrl}/game`, {
           auth: {
             authorization: sessionStorage.getItem('auth_token'),
@@ -128,17 +135,30 @@ export function Provider({ children }: Props) {
         socketRef.current = newSocket;
         setConnected(true);
 
-        toast('Welcome to CRYPTO CRA$H.  Starting with $1,000 dollars, buy and sell crypto tokens to make more money!', {
-          icon: '📢',
-          position: 'top-left',
-          duration: 100000,
-          style: {
-            width: '280px',
-          },
-        });
+        toast(
+          'Welcome to CRYPTO CRA$H.  Starting with $1,000 dollars, buy and sell crypto tokens to make more money!',
+          {
+            icon: '📢',
+            position: 'top-left',
+            duration: 10000,
+            style: {
+              width: '280px',
+            },
+          }
+        );
       }
     },
-    [serverUrl]
+    [socketRef.current, serverUrl, connected]
+  );
+
+  const requestTokenData = useCallback(
+    (tokenId: string) => {
+      if (socketRef.current) {
+        setRequestedToken(null);
+        socketRef.current.emit(Actions.RequestTokenDataData, tokenId);
+      }
+    },
+    [socketRef.current]
   );
 
   const exchangeToken = useCallback((tokenId: string, amount: number) => {
@@ -246,7 +266,7 @@ export function Provider({ children }: Props) {
       toast(msg, {
         icon: '📢',
         position: 'top-left',
-        duration: 1000000,
+        duration: 10000,
         style: {
           width: '280px',
         },
@@ -254,6 +274,10 @@ export function Provider({ children }: Props) {
     } else if (type === 1) {
       elonMuskTalk(msg);
     }
+  };
+
+  const handleTokenDataReturned = (token: Token) => {
+    setRequestedToken(token);
   };
 
   // const handleTokenExchanged = (transaction: Transaction) => {
@@ -293,6 +317,7 @@ export function Provider({ children }: Props) {
       socketRef.current.on(Events.PlayerJoined, handlePlayerJoined);
       socketRef.current.on(Events.PlayerLeft, handlePlayerLeft);
       socketRef.current.on(Events.MessageAnnounced, handleMessageAnnounced);
+      socketRef.current.on(Events.TokenDataReturned, handleTokenDataReturned);
       // socketRef.current.on(Events.TokenExchanged, handleTokenExchanged);
     }
 
@@ -302,6 +327,7 @@ export function Provider({ children }: Props) {
         socketRef.current.off(Events.PlayerUpdated, handlePlayerUpdated);
         socketRef.current.off(Events.PlayerJoined, handlePlayerJoined);
         socketRef.current.off(Events.MessageAnnounced, handleMessageAnnounced);
+        socketRef.current.on(Events.TokenDataReturned, handleTokenDataReturned);
         // socketRef.current.off(Events.TokenExchanged, handleTokenExchanged);
       }
     };
@@ -311,11 +337,13 @@ export function Provider({ children }: Props) {
     () => ({
       player,
       tokens,
+      requestedToken,
       players,
       playerMap,
       transactions,
       login,
       exchangeToken,
+      requestTokenData,
       calculatePlayerPortfolioValue,
       calculateRank,
       calculatePlayerAvatarNumber,
