@@ -2,7 +2,7 @@ const path = require('path');
 
 const isJsFile = (filename) => /(.ts|.tsx|.js|.jsx)$/.test(filename);
 
-const buildEslintCommand = (filenames) => {
+/* const buildEslintCommand = (filenames) => {
   const jsFiles = filenames.filter(isJsFile);
   if (jsFiles.length === 0) {
     return 'echo "No js files"';
@@ -22,10 +22,12 @@ const buildJestCommand = (filenames) => {
     .join(' ')}`;
 };
 
+*/
+
 module.exports = {
   './src/**/*': [
-    'prettier --check ./src',
-    buildEslintCommand,
-    buildJestCommand,
+//    'prettier --check ./src',
+//    buildEslintCommand,
+//    buildJestCommand,
   ],
 };

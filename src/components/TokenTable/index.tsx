@@ -51,7 +51,7 @@ function Table() {
     (token: Token): string => {
       const amount = tokenAmountMap[token.id] || initialAmount;
       return accounting.formatMoney(
-        Math.round(amount * token.price * 1000) / 1000,
+        Math.round(amount * token.price * 100) / 100,
         '$',
         3
       );

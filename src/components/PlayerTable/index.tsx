@@ -75,25 +75,25 @@ function Table({ onPlayerClick }: Props) {
                 </td>
                 <td className="px-6 py-4">
                   {accounting.formatMoney(
-                    Math.round(player.cash * 1000) / 1000,
+                    Math.round(player.cash * 100) / 100,
                     '$',
-                    3
+                    2
                   )}
                 </td>
                 <td className="px-6 py-4">
                   {accounting.formatMoney(
                     calculatePlayerPortfolioValue(player.id),
                     '$',
-                    3
+                    2
                   )}
                 </td>
                 <td className="px-6 py-4">
                   {accounting.formatMoney(
-                    Math.round(player.cash * 1000) / 1000 +
+                    Math.round(player.cash * 100) / 100 +
                       calculatePlayerPortfolioValue(player.id),
 
                     '$',
-                    3
+                    2
                   )}
                 </td>
               </tr>

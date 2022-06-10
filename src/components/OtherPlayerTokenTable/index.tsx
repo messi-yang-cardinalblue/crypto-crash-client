@@ -43,7 +43,7 @@ function Table({ player }: Props) {
                 {token.name}
               </th>
               <td className="px-6 py-4">
-                {accounting.formatMoney(token.price, '$', 3)}
+                {accounting.formatMoney(token.price, '$', 2)}
               </td>
 
               <td className="px-6 py-4">
@@ -53,7 +53,7 @@ function Table({ player }: Props) {
                 {accounting.formatMoney(
                   player.tokenOwnerships[token.id].amount * token.price,
                   '$',
-                  3
+                  2
                 )}
               </td>
             </tr>
