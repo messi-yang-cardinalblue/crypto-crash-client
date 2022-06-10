@@ -57,7 +57,7 @@ function Table({ onTokenChartClick }: Props) {
         return;
       }
       const amount = tokenAmountMap[token.id] || initialAmount;
-      const price = amount * token.price;
+      const price = Math.round(amount * token.price * 100) / 100;
       const playerCash = Math.round(player.cash * 100) / 100;
       if (playerCash < price) {
         toast.error(
