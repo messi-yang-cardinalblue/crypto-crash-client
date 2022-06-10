@@ -112,9 +112,6 @@ function Table({ onTokenChartClick }: Props) {
               Token
             </th>
             <th scope="col" className="px-6 py-3">
-              Energy (Debug)
-            </th>
-            <th scope="col" className="px-6 py-3">
               Price
             </th>
             <th scope="col" className="px-6 py-3">
@@ -149,9 +146,6 @@ function Table({ onTokenChartClick }: Props) {
               >
                 {token.name}
               </th>
-              <td className="px-6 py-4">
-                {token._energy}
-              </td>
               <td className="px-6 py-4">
                 {accounting.formatMoney(token.price, '$', 2)}
               </td>
