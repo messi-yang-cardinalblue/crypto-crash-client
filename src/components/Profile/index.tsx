@@ -16,7 +16,7 @@ function Portfolio({ player }: Props) {
   return (
     <div className="flex items-center p-6 bg-white min-w-min rounded-lg border border-gray-300 shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <div className="w-24 h-24 mr-4">
-        {player && (
+        {player && player.id && (
           <img
             className="w-24 h-24 rounded-full shadow-md"
             src={`https://avatars.dicebear.com/api/pixel-art/${calculatePlayerAvatarNumber(
