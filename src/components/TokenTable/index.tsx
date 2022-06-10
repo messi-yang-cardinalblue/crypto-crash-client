@@ -29,12 +29,12 @@ function Table({ onTokenChartClick }: Props) {
       if (historyPrices.length < 2) {
         return 100;
       }
-      const margin =
-        historyPrices[historyPrices.length - 1] -
+      const basePrice =
         historyPrices[
           historyPrices.length > 10 ? historyPrices.length - 10 : 0
         ];
-      return Math.round((margin / token.price) * 10000) / 100;
+      const margin = token.price - basePrice;
+      return Math.round((margin / basePrice) * 10000) / 100;
     },
     [tokenAmountMap]
   );
