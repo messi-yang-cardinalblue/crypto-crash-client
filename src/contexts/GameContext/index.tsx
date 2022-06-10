@@ -136,14 +136,17 @@ export function Provider({ children }: Props) {
         socketRef.current = newSocket;
         setConnected(true);
 
-        toast('Welcome to CRYPTO CRA$H!  Starting with $1,000 dollars, how much can you increase your portfolio value by buying and selling crypto tokens?', {
-          icon: '📢',
-          position: 'top-left',
-          duration: 10000,
-          style: {
-            width: '280px',
-          },
-        });
+        toast(
+          'Welcome to CRYPTO CRA$H!  Starting with $1,000 dollars, how much can you increase your portfolio value by buying and selling crypto tokens?',
+          {
+            icon: '📢',
+            position: 'top-left',
+            duration: 10000,
+            style: {
+              width: '280px',
+            },
+          }
+        );
       }
     },
     [socketRef.current, serverUrl, connected]
@@ -249,15 +252,15 @@ export function Provider({ children }: Props) {
     });
   };
 
-  const handlePlayerLeft = (p: Player) => {
-    toast.success(`${p.name} left the game`, {
-      position: 'bottom-left',
-      duration: 3000,
-      style: {
-        width: '280px',
-      },
-    });
-  };
+  // const handlePlayerLeft = (p: Player) => {
+  //   toast.success(`${p.name} left the game`, {
+  //     position: 'bottom-left',
+  //     duration: 3000,
+  //     style: {
+  //       width: '280px',
+  //     },
+  //   });
+  // };
 
   const handleMessageAnnounced = (type: number, msg: string) => {
     if (type === 0) {
@@ -313,7 +316,7 @@ export function Provider({ children }: Props) {
       socketRef.current.on(Events.GameUpdated, handleGameUpdated);
       socketRef.current.on(Events.PlayerUpdated, handlePlayerUpdated);
       socketRef.current.on(Events.PlayerJoined, handlePlayerJoined);
-      socketRef.current.on(Events.PlayerLeft, handlePlayerLeft);
+      // socketRef.current.on(Events.PlayerLeft, handlePlayerLeft);
       socketRef.current.on(Events.MessageAnnounced, handleMessageAnnounced);
       socketRef.current.on(Events.TokenDataReturned, handleTokenDataReturned);
       // socketRef.current.on(Events.TokenExchanged, handleTokenExchanged);
