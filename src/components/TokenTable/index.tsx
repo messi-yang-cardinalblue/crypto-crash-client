@@ -53,7 +53,7 @@ function Table() {
       return accounting.formatMoney(
         Math.round(amount * token.price * 100) / 100,
         '$',
-        3
+        2
       );
     },
     [tokenAmountMap]
@@ -69,7 +69,7 @@ function Table() {
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <table className="w-full text-sm text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
@@ -79,19 +79,19 @@ function Table() {
               Price
             </th>
             <th scope="col" className="px-6 py-3">
-              Trend in 10 Seconds
+              Trend 
             </th>
             <th scope="col" className="px-6 py-3">
-              Changes in 10 Seconds
+              Recent change
             </th>
             <th scope="col" className="px-6 py-3">
-              Owned Quantity
+              You Own
             </th>
             <th scope="col" className="px-6 py-3">
-              Quantity For Trade
+              Quantity to buy/sell
             </th>
             <th scope="col" className="px-6 py-3">
-              Estimated Price
+              Transaction amount
             </th>
             <th scope="col" className="px-6 py-3">
               Action
@@ -111,7 +111,7 @@ function Table() {
                 {token.name}
               </th>
               <td className="px-6 py-4">
-                {accounting.formatMoney(token.price, '$', 3)}
+                {accounting.formatMoney(token.price, '$', 2)}
               </td>
               <td className="px-1 py-1">
                 <Sparklines data={token.historyPrices}>
