@@ -5,6 +5,7 @@ import {
   SparklinesLine,
   SparklinesReferenceLine,
 } from 'react-sparklines';
+import toast from 'react-hot-toast';
 import GameContext, { Token } from '@/contexts/GameContext';
 import { getLastItemsFromArray } from '@/utils/common';
 import QuantityInput from './QuantityInput';
@@ -51,11 +52,22 @@ function Table({ onTokenChartClick }: Props) {
   }, []);
 
   const handleBuyClick = useCallback(
-    (tokenId: string) => {
-      const amount = tokenAmountMap[tokenId] || initialAmount;
-      exchangeToken(tokenId, amount);
+    (token: Token) => {
+      if (!player) {
+        return;
+      }
+      const amount = tokenAmountMap[token.id] || initialAmount;
+      const price = amount * token.price;
+      const playerCash = Math.round(player.cash * 100) / 100;
+      if (playerCash < price) {
+        toast.error(
+          `You don't have enough cash, current cash: ${playerCash}, transaction amount: ${price}`
+        );
+        return;
+      }
+      exchangeToken(token.id, amount);
     },
-    [tokenAmountMap]
+    [player, tokenAmountMap]
   );
 
   const getEstimatedPrice = useCallback(
@@ -67,15 +79,28 @@ function Table({ onTokenChartClick }: Props) {
         2
       );
     },
-    [tokenAmountMap]
+    [player, tokenAmountMap]
   );
 
   const handleSellClick = useCallback(
-    (tokenId: string) => {
-      const amount = tokenAmountMap[tokenId] || initialAmount;
-      exchangeToken(tokenId, -amount);
+    (token: Token) => {
+      if (!player) {
+        return;
+      }
+      const amount = tokenAmountMap[token.id] || initialAmount;
+      if (player.tokenOwnerships[token.id].amount < amount) {
+        toast.error(
+          `You don't have ${amount} ${
+            token.name
+          } to sell, the amount you have: ${
+            player.tokenOwnerships[token.id].amount
+          }`
+        );
+        return;
+      }
+      exchangeToken(token.id, -amount);
     },
-    [tokenAmountMap]
+    [player, tokenAmountMap]
   );
 
   return (
@@ -187,7 +212,7 @@ function Table({ onTokenChartClick }: Props) {
                     type="button"
                     className="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-l-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                     onClick={() => {
-                      handleBuyClick(token.id);
+                      handleBuyClick(token);
                     }}
                   >
                     Buy
@@ -196,7 +221,7 @@ function Table({ onTokenChartClick }: Props) {
                     type="button"
                     className="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-r-md border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
                     onClick={() => {
-                      handleSellClick(token.id);
+                      handleSellClick(token);
                     }}
                   >
                     Sell
