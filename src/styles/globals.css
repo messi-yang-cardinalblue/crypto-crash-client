@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
-
 .background-animate {
   background-size: 400%;
 
@@ -11,7 +9,9 @@
   -moz-animation: loop 3s ease infinite;
   animation: loop 3s ease infinite;
 }
-
+* {
+  font-family: 'Sora', sans-serif !important;
+}
 @layer base {
   html {
     font-family: 'Sora', sans-serif !important;
@@ -50,4 +50,5 @@ h6 {
 
 * {
   box-sizing: border-box;
+  font-family: 'Sora', sans-serif !important;
 }

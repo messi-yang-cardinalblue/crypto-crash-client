@@ -1,4 +1,6 @@
 import type { NextPage, GetStaticProps } from 'next';
+import Head from 'next/head';
+import accounting from 'accounting';
 import { useContext, useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Toaster } from 'react-hot-toast';
@@ -52,6 +54,14 @@ const Home: NextPage = function Home() {
 
   return (
     <main className="">
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
       {!player && (
         <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-50">
           <div className="w-4/5 max-w-screen-md flex flex-col items-center justify-center gap-y-20 gap-x-4">
@@ -95,8 +105,8 @@ const Home: NextPage = function Home() {
             root: { zIndex: '9999' },
             modal: {
               width: '500px',
-              background: 'none',
               boxShadow: 'none',
+              borderRadius: '8px',
             },
             closeIcon: {
               color: 'white',
@@ -106,13 +116,22 @@ const Home: NextPage = function Home() {
           onClose={handleDisplayTokenChartModalClose}
           center
         >
-          <span>{requestedToken.name}</span>
-          <TokenPriceChart
-            width={500}
-            height={300}
-            winning={checkIfTokenIsWinning(requestedToken)}
-            data={getLastItemsFromArray(requestedToken.historyPrices, 300)}
-          />
+          <div className="flex flex-col">
+            <div className="flex mb-2 items-end">
+              <div className="text-2xl text-gray-600 mb-0">
+                {requestedToken.name}
+              </div>
+              <div className="text-md text-gray-500 ml-2 mb-1">
+                {accounting.formatMoney(requestedToken.price)}
+              </div>
+            </div>
+            <TokenPriceChart
+              width={464}
+              height={300}
+              winning={checkIfTokenIsWinning(requestedToken)}
+              data={getLastItemsFromArray(requestedToken.historyPrices, 300)}
+            />
+          </div>
         </Modal>
       )}
       <Toaster />
